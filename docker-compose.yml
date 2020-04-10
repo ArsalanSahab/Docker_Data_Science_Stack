@@ -1,0 +1,127 @@
+version: "3"
+
+
+services:
+
+  # Data Exploration and Computation
+
+
+  jupyter:
+
+    container_name: "data_science_stack_jupyter"
+    restart: "always"
+    build: services/jupyter
+    env_file:
+      - ./config/jupyter.env
+      - ./config/minio.env
+      - ./config/shared_database.env
+    volumes:
+      - ./shared/notebooks/:/home/admin/work/notebooks
+      - ./shared/dags/:/home/admin/work/dags
+      - ./services/apistar/api/:/home/admin/work/api
+    ports:
+      - 8888:8888
+    
+
+  # Visualisation 
+
+  superset:
+    container_name: "data_science_stack_superset"
+    restart: "always"
+    image: tylerfowler/superset
+    depends_on:
+        - postgres
+    env_file:
+        - ./config/superset_container.env
+        - ./config/superset_database.env
+    ports:
+      - 8088:8088
+
+
+  # Storage
+
+  postgres:
+    container_name: "data_science_stack_postgres"
+    restart: "always"
+    image: postgres
+    env_file:
+      - ./config/postgres.env
+      - ./config/superset_database.env
+      - ./config/airflow_database.env
+      - ./config/shared_database.env
+    volumes:
+      - postgres_volume:/var/lib/postgresql/data/
+      - ./services/postgres/:/docker-entrypoint-initdb.d/
+    ports:
+      - 5432:5432
+
+
+  # Scheduler
+
+  airflow:
+    container_name: "data_science_stack_airflow"
+    restart: "always"
+    image: puckel/docker-airflow
+    depends_on:
+      - postgres
+    env_file:
+      - ./config/airflow_container.env
+      - ./config/minio.env
+      - ./config/shared_database.env
+    volumes:
+      - ./shared/requirements.txt:/requirements.txt
+      - ./shared/dags/:/usr/local/airflow/dags
+    ports:
+      - 8080:8080
+    command: webserver
+
+
+  # Model Utilities
+
+  minio:
+    container_name: "data_science_stack_minio"
+    restart: "always"
+    image: minio/minio
+    env_file:
+        - ./config/minio.env
+    volumes:
+        - minio_volume:/data
+    ports:
+        - 9000:9000
+    command: server /data
+
+
+  # API
+
+  apistar:
+    container_name: "data_science_stack_apistar"
+    restart: "always"
+    build: services/apistar
+    env_file:
+      - ./config/minio.env
+    volumes:
+      - ./services/apistar/api:/usr/src/app
+    ports:
+      - 8000:8000
+    command: gunicorn app:app -b 0.0.0.0:8000
+
+
+  # Docker Administration
+
+  portainer:
+    container_name: "data_science_stack_portainer"
+    restart: "always"
+    image: portainer/portainer
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - portainer_volume:/data
+    ports:
+      - 9090:9000
+    command: -H unix:///var/run/docker.sock
+
+# Volumes to persist data
+
+volumes:
+  postgres_volume:
+  minio_volume:
+  portainer_volume:
