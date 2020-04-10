@@ -11,14 +11,14 @@ services:
     container_name: "docker_data_science_stack_jupyter"
     restart: "always"
     build: services/jupyter
-    env_file:
+    env_file:jovyan
       - ./config/jupyter.env
       - ./config/minio.env
       - ./config/shared_database.env
     volumes:
-      - ./shared/notebooks/:/home/admin/work/notebooks
-      - ./shared/dags/:/home/admin/work/dags
-      - ./services/apistar/api/:/home/admin/work/api
+      - ./shared/notebooks/:/home/jovyan/work/notebooks
+      - ./shared/dags/:/home/jovyan/work/dags
+      - ./services/apistar/api/:/home/jovyan/work/api
     ports:
       - 8888:8888
     
@@ -106,7 +106,7 @@ services:
     command: gunicorn app:app -b 0.0.0.0:8000
 
 
-  # Docker Administration
+  # Docker jovyanistration
 
   portainer:
     container_name: "docker_data_science_stack_portainer"
