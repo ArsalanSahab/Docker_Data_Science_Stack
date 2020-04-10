@@ -5,7 +5,7 @@ A Docker Data Science Workflow Stack
 
 ### Defaults
 
-By default the password and secret keys are set to : `root` and user is `admin`.
+By default the password and secret keys are set to : `docker321` and user is `admin`.
 
 ## How to Run
 
@@ -24,6 +24,7 @@ By default the password and secret keys are set to : `root` and user is `admin`.
 5. APIStar for api related queries.
 6. Airflow for Task Scheduling.
 7. Portriner for administring docker images on ports.
+8. PgAdmin4 for Visualising and interacting with PostgreSQL.
 
 
 
@@ -37,3 +38,18 @@ By default the password and secret keys are set to : `root` and user is `admin`.
 | Portainer | 9090 |
 | Postgres | 5432 |
 | Superset | 8088 |
+| PgAdmin4 | 5050 |
+
+
+
+### Additonal Instructions for PgAdmin4
+
+1. goto localhost:5050.
+2. Enter email : `admin@admin.com` , password : `docker321`.
+3. Create new Server > On the first tab add suitable name > goto connections tab and enter data :
+                * Host : your machine IP Address
+                * Port : 5432
+                * Maintenence : postgres
+                * Username : postgres
+                * password : docker321
+4. Click save , now you can see databased under servers tab.
