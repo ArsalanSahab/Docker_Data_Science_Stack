@@ -8,7 +8,7 @@ services:
 
   jupyter:
 
-    container_name: "data_science_stack_jupyter"
+    container_name: "docker_data_science_stack_jupyter"
     restart: "always"
     build: services/jupyter
     env_file:
@@ -26,7 +26,7 @@ services:
   # Visualisation 
 
   superset:
-    container_name: "data_science_stack_superset"
+    container_name: "docker_data_science_stack_superset"
     restart: "always"
     image: tylerfowler/superset
     depends_on:
@@ -41,7 +41,7 @@ services:
   # Storage
 
   postgres:
-    container_name: "data_science_stack_postgres"
+    container_name: "docker_data_science_stack_postgres"
     restart: "always"
     image: postgres
     env_file:
@@ -59,7 +59,7 @@ services:
   # Scheduler
 
   airflow:
-    container_name: "data_science_stack_airflow"
+    container_name: "docker_data_science_stack_airflow"
     restart: "always"
     image: puckel/docker-airflow
     depends_on:
@@ -79,7 +79,7 @@ services:
   # Model Utilities
 
   minio:
-    container_name: "data_science_stack_minio"
+    container_name: "docker_data_science_stack_minio"
     restart: "always"
     image: minio/minio
     env_file:
@@ -94,7 +94,7 @@ services:
   # API
 
   apistar:
-    container_name: "data_science_stack_apistar"
+    container_name: "docker_data_science_stack_apistar"
     restart: "always"
     build: services/apistar
     env_file:
@@ -109,7 +109,7 @@ services:
   # Docker Administration
 
   portainer:
-    container_name: "data_science_stack_portainer"
+    container_name: "docker_data_science_stack_portainer"
     restart: "always"
     image: portainer/portainer
     volumes:
