@@ -57,4 +57,4 @@ By default the password and secret keys are set to : `docker321` and user is `ad
 
 ### Additonal Instructions for Jupyter
 Depending on read/write permissions you might have to run the following command in the terminal :
-`sudo chown -R 1000:1000 /path/to/your/DOCKER_DATA_SIENCE_STACK/shared` , where 1000:1000 is the user:group of the notebooks folder.
+`sudo chown -R 1000:1000 /path/to/your/Docker_Data_Science_Stack/shared` , where 1000:1000 is the user:group of the notebooks folder.
