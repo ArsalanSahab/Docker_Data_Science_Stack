@@ -53,3 +53,8 @@ By default the password and secret keys are set to : `docker321` and user is `ad
                 * Username : postgres
                 * password : docker321
 4. Click save , now you can see databased under servers tab.
+
+
+### Additonal Instructions for Jupyter
+Depending on read/write permissions you might have to run the following command in the terminal :
+`sudo chown -R 1000:1000 /path/to/your/DOCKER_DATA_SIENCE_STACK/shared` , where 1000:1000 is the user:group of the notebooks folder.
