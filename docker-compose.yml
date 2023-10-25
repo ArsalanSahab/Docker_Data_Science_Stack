@@ -21,9 +21,9 @@ services:
       - ./services/apistar/api/:/home/jovyan/work/api
     ports:
       - 8888:8888
-    
 
-  # Visualisation 
+
+  # Visualisation
 
   superset:
     container_name: "docker_docker_data_science_stack_superset"
@@ -105,7 +105,8 @@ services:
         - minio_volume:/data
     ports:
         - 9000:9000
-    command: server /data
+        - 9010:9010
+    command: server /data --console-address ":9010"
 
 
   # API
