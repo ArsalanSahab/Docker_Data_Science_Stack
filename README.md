@@ -25,6 +25,7 @@ By default the password and secret keys are set to : `docker321` and user is `ad
 6. Airflow for Task Scheduling.
 7. Portriner for administring docker images on ports.
 8. PgAdmin4 for Visualising and interacting with PostgreSQL.
+9. Spark (master and 3 workers) for parallel computation.
 
 
 
@@ -39,6 +40,7 @@ By default the password and secret keys are set to : `docker321` and user is `ad
 | Postgres | 5432 |
 | Superset | 8088 |
 | PgAdmin4 | 5050 |
+| Spark | 8181 |
 
 
 
@@ -53,3 +55,8 @@ By default the password and secret keys are set to : `docker321` and user is `ad
                 * Username : postgres
                 * password : docker321
 4. Click save , now you can see databased under servers tab.
+
+
+### Additonal Instructions for Jupyter
+Depending on read/write permissions you might have to run the following command in the terminal :
+`sudo chown -R 1000:1000 /path/to/your/Docker_Data_Science_Stack/shared` , where 1000:1000 is the user:group of the notebooks folder.
