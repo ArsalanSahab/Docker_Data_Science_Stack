@@ -1,13 +1,13 @@
-version: "3"
-
+version: "3.7"
 
 services:
 
   # Data Exploration and Computation
 
 
-  jupyter:
+  #Jupyter notebook
 
+  jupyter:
     container_name: "docker_data_science_stack_jupyter"
     restart: "always"
     build: services/jupyter
@@ -18,10 +18,12 @@ services:
     volumes:
       - ./shared/notebooks/:/home/jovyan/work/notebooks
       - ./shared/dags/:/home/jovyan/work/dags
+      - ./shared/spark/resources/data:/home/jovyan/work/data/
+      - ./shared/spark/resources/jars:/home/jovyan/work/jars/
       - ./services/apistar/api/:/home/jovyan/work/api
     ports:
       - 8888:8888
-
+      - "4040-4080:4040-4080"
 
   # Visualisation
 
@@ -30,13 +32,12 @@ services:
     restart: "always"
     image: tylerfowler/superset
     depends_on:
-        - postgres
+      - postgres
     env_file:
-        - ./config/superset_container.env
-        - ./config/superset_database.env
+      - ./config/superset_container.env
+      - ./config/superset_database.env
     ports:
       - 8088:8088
-
 
   # Storage
 
@@ -55,7 +56,6 @@ services:
     ports:
       - 5432:5432
 
-
   pgadmin:
     container_name: "docker_data_science_stack_pgadmin"
     restart: "always"
@@ -71,7 +71,6 @@ services:
       - pgadmin:/root/.pgadmin
     ports:
       - 5050:80
-
 
   # Scheduler
 
@@ -92,7 +91,6 @@ services:
       - 8080:8080
     command: webserver
 
-
   # Model Utilities
 
   minio:
@@ -100,14 +98,13 @@ services:
     restart: "always"
     image: minio/minio
     env_file:
-        - ./config/minio.env
+      - ./config/minio.env
     volumes:
-        - minio_volume:/data
+      - minio_volume:/data
     ports:
-        - 9000:9000
-        - 9010:9010
+      - 9000:9000
+      - 9010:9010
     command: server /data --console-address ":9010"
-
 
   # API
 
@@ -123,7 +120,6 @@ services:
       - 8000:8000
     command: gunicorn app:app -b 0.0.0.0:8000
 
-
   # Docker jovyanistration
 
   portainer:
@@ -136,6 +132,82 @@ services:
     ports:
       - 9090:9000
     command: -H unix:///var/run/docker.sock
+
+  # Spark with 3 workers
+  spark:
+    image: bitnami/spark:latest
+    user: root # Run container as root container: https://docs.bitnami.com/tutorials/work-with-non-root-containers/
+    hostname: spark
+    networks:
+      - default_net
+    environment:
+      - SPARK_MODE=master
+      - SPARK_RPC_AUTHENTICATION_ENABLED=no
+      - SPARK_RPC_ENCRYPTION_ENABLED=no
+      - SPARK_LOCAL_STORAGE_ENCRYPTION_ENABLED=no
+      - SPARK_SSL_ENABLED=no
+    volumes:
+      - ./shared/spark/app:/usr/local/spark/app # Spark scripts folder (Must be the same path in airflow and Spark Cluster)
+      - ./shared/spark/resources:/usr/local/spark/resources #Resources folder (Must be the same path in airflow and Spark Cluster)
+    ports:
+      - "8181:8080"
+      - "7077:7077"
+
+  spark-worker-1:
+    image: bitnami/spark:latest
+    user: root
+    networks:
+      - default_net
+    environment:
+      - SPARK_MODE=worker
+      - SPARK_MASTER_URL=spark://spark:7077
+      - SPARK_WORKER_MEMORY=1G
+      - SPARK_WORKER_CORES=1
+      - SPARK_RPC_AUTHENTICATION_ENABLED=no
+      - SPARK_RPC_ENCRYPTION_ENABLED=no
+      - SPARK_LOCAL_STORAGE_ENCRYPTION_ENABLED=no
+      - SPARK_SSL_ENABLED=no
+    volumes:
+      - ./shared/spark/app:/usr/local/spark/app # Spark scripts folder (Must be the same path in airflow and Spark Cluster)
+      - ./shared/spark/resources:/usr/local/spark/resources #Resources folder (Must be the same path in airflow and Spark Cluster)
+
+  spark-worker-2:
+    image: bitnami/spark:latest
+    user: root
+    networks:
+      - default_net
+    environment:
+      - SPARK_MODE=worker
+      - SPARK_MASTER_URL=spark://spark:7077
+      - SPARK_WORKER_MEMORY=1G
+      - SPARK_WORKER_CORES=1
+      - SPARK_RPC_AUTHENTICATION_ENABLED=no
+      - SPARK_RPC_ENCRYPTION_ENABLED=no
+      - SPARK_LOCAL_STORAGE_ENCRYPTION_ENABLED=no
+      - SPARK_SSL_ENABLED=no
+    volumes:
+      - ./shared/spark/app:/usr/local/spark/app # Spark scripts folder (Must be the same path in airflow and Spark Cluster)
+      - ./shared/spark/resources:/usr/local/spark/resources #Resources folder (Must be the same path in airflow and Spark Cluster)
+
+  spark-worker-3:
+    image: bitnami/spark:latest
+    user: root
+    networks:
+      - default_net
+    environment:
+      - SPARK_MODE=worker
+      - SPARK_MASTER_URL=spark://spark:7077
+      - SPARK_WORKER_MEMORY=1G
+      - SPARK_WORKER_CORES=1
+      - SPARK_RPC_AUTHENTICATION_ENABLED=no
+      - SPARK_RPC_ENCRYPTION_ENABLED=no
+      - SPARK_LOCAL_STORAGE_ENCRYPTION_ENABLED=no
+      - SPARK_SSL_ENABLED=no
+    volumes:
+      - ./shared/spark/app:/usr/local/spark/app # Spark scripts folder (Must be the same path in airflow and Spark Cluster)
+      - ./shared/spark/resources:/usr/local/spark/resources #Resources folder (Must be the same path in airflow and Spark Cluster)
+
+
 
 # Volumes to persist data
 

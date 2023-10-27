@@ -1,4 +1,4 @@
-FROM jupyter/scipy-notebook
+FROM jupyter/pyspark-notebook
 
 USER root
 
