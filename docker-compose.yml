@@ -10,7 +10,7 @@ services:
   jupyter:
     container_name: "docker_data_science_stack_jupyter"
     restart: "always"
-    build: services/jupyter
+    image: jupyter/pyspark-notebook
     env_file:
       - ./config/jupyter.env
       - ./config/minio.env
